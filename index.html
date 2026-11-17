@@ -1,0 +1,2495 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grunderna i Funktionsnotering</title>
+  <!-- Google Font: IBM Plex Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --success: #16a34a;
+      --error: #dc2626;
+      --notebook-line: #93c5fd;
+      --app-font: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--app-font);
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--card-bg);
+      padding: 1rem 1.25rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: relative;
+      z-index: 30;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header-icon {
+      width: 42px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.05rem;
+      flex-shrink: 0;
+    }
+
+    h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .sub-title {
+      font-size: 0.75rem;
+      color: var(--primary);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* PARENTHESES GUIDE DROPDOWN */
+    .guide-wrapper {
+      position: relative;
+    }
+
+    .guide-btn {
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1e40af;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .guide-btn:hover {
+      background: #dbeafe;
+      border-color: var(--primary);
+    }
+
+    .guide-panel {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 0.5rem);
+      width: 460px;
+      max-width: 92vw;
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 1.15rem;
+      box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.18);
+      z-index: 60;
+      text-align: left;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .guide-panel.open {
+      display: flex;
+    }
+
+    .guide-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .guide-panel-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--primary);
+    }
+
+    .guide-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.15rem 0.35rem;
+    }
+
+    .guide-close-btn:hover {
+      color: var(--text);
+    }
+
+    .guide-box-blue {
+      background: #eff6ff;
+      border: 1.5px solid #93c5fd;
+      border-radius: 10px;
+      padding: 0.85rem;
+    }
+
+    .guide-box-rose {
+      background: #fff1f2;
+      border: 1.5px solid #fda4af;
+      border-radius: 10px;
+      padding: 0.85rem;
+    }
+
+    .guide-box-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .guide-badge-blue {
+      background: #dbeafe;
+      color: #1d4ed8;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    .guide-badge-rose {
+      background: #ffe4e6;
+      color: #be123c;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    .guide-box-desc {
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .phase-tabs {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .tab-btn:hover:not(.locked):not(.active) {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .tab-btn.completed:not(.active) {
+      border-color: var(--success);
+      color: var(--success);
+      background: #f0fdf4;
+    }
+
+    .tab-btn.locked {
+      opacity: 0.55;
+      cursor: not-allowed;
+      background: #f1f5f9;
+      color: var(--text-muted);
+    }
+
+    .progress-container {
+      width: 100%;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    /* FAS 1: X ELLER Y RAPID-FIRE VIEW */
+    .fas1-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+
+    .fas1-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem 1.75rem;
+      width: 100%;
+      max-width: 640px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1.35rem;
+    }
+
+    .fas1-prompt-header {
+      width: 100%;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 1.1rem;
+    }
+
+    .fas1-kicker {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .fas1-prompt-title {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .fas1-question-block {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .fas1-question-label {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .fas1-choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .btn-fas1-choice {
+      padding: 1.15rem 1.5rem;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 2.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-fas1-choice:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-fas1-choice.correct {
+      border-color: var(--success);
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-fas1-choice.wrong {
+      border-color: var(--error);
+      background: #fef2f2;
+      color: var(--error);
+    }
+
+    .btn-fas1-choice:disabled {
+      cursor: default;
+    }
+
+    .fas1-feedback-row {
+      display: none;
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .fas1-feedback-row.visible {
+      display: flex;
+    }
+
+    .fas1-feedback-row.success {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      color: var(--success);
+    }
+
+    .fas1-feedback-row.error {
+      background: #fef2f2;
+      border: 1.5px solid #fecaca;
+      color: var(--error);
+    }
+
+    .fas1-milestone-box {
+      display: none;
+      width: 100%;
+      background: #f0fdf4;
+      border: 2px solid var(--success);
+      border-radius: 12px;
+      padding: 1.15rem;
+      text-align: left;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .fas1-milestone-box.visible {
+      display: flex;
+    }
+
+    .fas1-milestone-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .fas1-milestone-desc {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #14532d;
+    }
+
+    .fas1-milestone-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+
+    @media (min-width: 520px) {
+      .fas1-milestone-actions {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* MAIN 2-COLUMN WORKSPACE (PHASES 2-5) */
+    .app-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 850px) {
+      .app-grid {
+        grid-template-columns: 340px 1fr;
+      }
+    }
+
+    .left-col, .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card.highlight-active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    .card.highlight-verified {
+      border-color: var(--success);
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .function-rule-box {
+      background: #eff6ff;
+      border: 2px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .function-rule-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .function-rule-display {
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #1e40af;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* PAPER MODE CARD FOR DIREKT PHASES */
+    .paper-guide-card {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 12px;
+      padding: 1.1rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .paper-guide-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #92400e;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .paper-guide-text {
+      font-size: 0.85rem;
+      color: #78350f;
+      line-height: 1.45;
+    }
+
+    /* MINI GRAPH CANVAS */
+    .graph-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .graph-toggle-btn {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      max-width: 270px;
+      aspect-ratio: 1 / 1;
+      margin: 0.5rem auto 0 auto;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .coord-callout {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 0.45rem;
+      border-radius: 6px;
+      padding: 0.4rem 0.5rem;
+      font-variant-numeric: tabular-nums;
+      transition: all 0.2s ease;
+    }
+
+    .coord-callout.locked {
+      color: var(--text-muted);
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+    }
+
+    .coord-callout.unlocked {
+      color: #7e22ce;
+      background: #f3e8ff;
+      border: 1px solid #d8b4fe;
+    }
+
+    .coord-callout.verified {
+      color: var(--success);
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+    }
+
+    .graph-nudge-row {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.45rem;
+    }
+
+    .btn-nudge {
+      padding: 0.25rem 0.65rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-nudge:hover {
+      background: #e2e8f0;
+    }
+
+    /* RIGHT COLUMN: ANCHORED QUESTION PROMPT */
+    .question-anchor-box {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .question-anchor-title {
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .notebook-display {
+      background: #ffffff;
+      border: 2px solid var(--notebook-line);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      align-items: center;
+      min-height: 92px;
+      justify-content: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .nb-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: 100%;
+    }
+
+    .nb-divider {
+      width: 75%;
+      height: 2px;
+      background-color: var(--text);
+      margin: 0.2rem 0;
+    }
+
+    .step-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .step-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .prompt-text {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .visual-check-banner {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      color: #1e3a8a;
+      font-size: 0.92rem;
+      font-weight: 600;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+
+    .visual-check-banner.verified {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #14532d;
+    }
+
+    /* SNABBKNAPPAR (QUICK BUTTONS) */
+    .snabb-buttons-container {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.25rem;
+    }
+
+    .btn-snabb {
+      padding: 0.4rem 0.75rem;
+      background: #e2e8f0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      color: var(--text);
+    }
+
+    .btn-snabb:hover {
+      background: #cbd5e1;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .btn-option {
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .btn-option:hover {
+      background: var(--bg);
+      border-color: var(--primary);
+    }
+
+    input[type="text"] {
+      height: 42px;
+      padding: 0 0.75rem;
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 700;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-submit {
+      padding: 0.65rem 1.25rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      padding: 0.65rem 1.1rem;
+      background: #f1f5f9;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-success {
+      padding: 0.65rem 1.1rem;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .btn-success:hover {
+      background: #15803d;
+    }
+
+    .btn-next {
+      padding: 0.75rem 1.5rem;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 0.25rem;
+      align-self: center;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-next:hover {
+      background: #15803d;
+      transform: scale(1.02);
+    }
+
+    .feedback {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: none;
+      margin-top: 0.5rem;
+    }
+
+    .feedback.error {
+      display: block;
+      background: #fef2f2;
+      color: var(--error);
+      border: 1px solid #fecaca;
+    }
+
+    .feedback.success {
+      display: block;
+      background: #f0fdf4;
+      color: var(--success);
+      border: 1px solid #bbf7d0;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 1.75rem;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal-content h2 {
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .modal-content p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .teckenregel-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      text-align: left;
+      font-size: 0.88rem;
+      color: #1e3a8a;
+    }
+
+    .teckenregel-title {
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+    }
+
+    .teckenregel-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .teckenregel-examples {
+      font-size: 0.88rem;
+      font-weight: 700;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 6px;
+      padding: 0.45rem 0.65rem;
+      margin-top: 0.5rem;
+      color: #0f172a;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <div class="header-title">
+        <div class="header-icon">f(x)</div>
+        <div>
+          <h1>Grunderna i Funktionsnotering</h1>
+          <div id="header-subtitle" class="sub-title">Fas 1 • Tolka funktionsnotering</div>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- COLLAPSIBLE PARENTHESES GUIDE DROPDOWN -->
+        <div class="guide-wrapper" id="parenthesis-guide-wrapper">
+          <button type="button" onclick="toggleGuideDropdown(event)" class="guide-btn">
+            <i class="fa-solid fa-circle-question"></i>
+            <span>x eller y i parentesen?</span>
+            <i class="fa-solid fa-chevron-down" id="guide-chevron" style="font-size:0.7rem; transition:transform 0.2s;"></i>
+          </button>
+
+          <div id="guide-panel" class="guide-panel">
+            <div class="guide-panel-header">
+              <span class="guide-panel-title">Så tolkar du parentesen</span>
+              <button type="button" onclick="closeGuideDropdown()" class="guide-close-btn">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div class="guide-box-blue">
+              <div class="guide-box-top" style="color:#1d4ed8;">
+                <span>1. Ett TAL i parentesen</span>
+                <span class="guide-badge-blue">Ex: f(3)</span>
+              </div>
+              <div class="guide-box-desc">
+                När det står ett tal inuti parentesen är <strong>x-värdet givet</strong> (x = 3). Du söker <strong>y-värdet</strong>.
+              </div>
+            </div>
+
+            <div class="guide-box-rose">
+              <div class="guide-box-top" style="color:#be123c;">
+                <span>2. Bokstaven x i parentesen</span>
+                <span class="guide-badge-rose">Ex: f(x) = 7</span>
+              </div>
+              <div class="guide-box-desc">
+                När det står <strong>x</strong> inuti parentesen är <strong>y-värdet givet</strong> (y = 7). Du söker <strong>x-värdet</strong>.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHASE TABS (5 PHASES) -->
+        <div class="phase-tabs">
+          <button id="tab-1" class="tab-btn active" onclick="selectPhase(1)">1. x eller y?</button>
+          <button id="tab-2" class="tab-btn locked" onclick="selectPhase(2)"><i class="fa-solid fa-lock"></i> 2. Guidad</button>
+          <button id="tab-3" class="tab-btn locked" onclick="selectPhase(3)"><i class="fa-solid fa-lock"></i> 3. Direkt</button>
+          <button id="tab-4" class="tab-btn locked" onclick="selectPhase(4)"><i class="fa-solid fa-lock"></i> 4. Guidad −</button>
+          <button id="tab-5" class="tab-btn locked" onclick="selectPhase(5)"><i class="fa-solid fa-lock"></i> 5. Direkt −</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-labels">
+        <span id="progress-text">Framsteg (0/10)</span>
+        <span id="sub-mode-text">Fas 1 av 5</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div id="progress-bar" class="progress-bar-fill"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FAS 1 VIEW: X ELLER Y? (MAX 3 IN A ROW, MIXED 5/5 & 6/4 SPLITS) -->
+  <section id="fas1-view" class="fas1-container">
+    <div class="fas1-card">
+      <div class="fas1-prompt-header">
+        <div class="fas1-kicker">Uppgift</div>
+        <div id="f1-prompt-title" class="fas1-prompt-title">Beräkna f(4)</div>
+      </div>
+
+      <div class="fas1-question-block">
+        <div class="fas1-question-label">Vilket värde är givet?</div>
+        <div class="fas1-choice-grid">
+          <button type="button" id="f1-btn-x" class="btn-fas1-choice" onclick="answerFas1('givenX')">x</button>
+          <button type="button" id="f1-btn-y" class="btn-fas1-choice" onclick="answerFas1('givenY')">y</button>
+        </div>
+      </div>
+
+      <!-- RAPID FEEDBACK & ENTER-TO-NEXT -->
+      <div id="f1-feedback-row" class="fas1-feedback-row">
+        <span id="f1-feedback-text"></span>
+        <button type="button" id="f1-next-btn" class="btn-success" style="display:none;" onclick="nextFas1Question()">
+          <span>Nästa</span> <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- MILESTONE CHOICE BANNER (10 / 10) -->
+      <div id="f1-milestone-box" class="fas1-milestone-box">
+        <div class="fas1-milestone-title">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Fas 1 avklarad! (10 / 10)</span>
+        </div>
+        <div class="fas1-milestone-desc">
+          Fas 2 (Guidad) är nu upplåst. Vill du gå vidare till Fas 2 eller fortsätta träna här?
+        </div>
+        <div class="fas1-milestone-actions">
+          <button type="button" class="btn-success" onclick="selectPhase(2)">
+            <span>Gå till Fas 2: Guidad</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+          <button type="button" class="btn-submit" onclick="continueFas1Practice()">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Fortsätt träna här</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASES 2–5 VIEW: ALGEBRAIC WORKSPACE -->
+  <main id="algebraic-view" class="app-grid" style="display:none;">
+    <!-- LEFT COLUMN: STATIC FUNCTION RULE & MINI GRAPH / PAPER NOTE -->
+    <section class="left-col">
+      <div class="card">
+        <div class="function-rule-box">
+          <div id="function-rule-title" class="function-rule-title">GIVEN FUNKTIONSREGEL</div>
+          <div id="function-rule-display" class="function-rule-display">f(x) = 2x + 10</div>
+        </div>
+      </div>
+
+      <!-- PAPER WORK REMINDER CARD (SHOWN IN FAS 3 & FAS 5) -->
+      <div id="paper-guide-card" class="paper-guide-card">
+        <div class="paper-guide-title"><i class="fa-solid fa-pen-to-square"></i> Arbeta i skrivboken</div>
+        <div class="paper-guide-text">
+          Skriv av funktionsregeln och utför hela uträkningen på papper i din anteckningsbok. Ange endast ditt slutgiltiga svar i rutan till höger.
+        </div>
+      </div>
+
+      <!-- MINI GRAPH CARD (SHOWN IN FAS 2 & FAS 4) -->
+      <div id="graph-card" class="card graph-card">
+        <div class="card-title" style="width:100%;">
+          <span>Visuell Kontroll</span>
+          <button class="graph-toggle-btn" onclick="toggleGraph()">
+            <i class="fa-solid fa-eye" id="graph-eye-icon"></i>
+            <span id="graph-toggle-label">Dölj graf</span>
+          </button>
+        </div>
+        <div id="graph-wrapper" style="width:100%;">
+          <div class="canvas-container">
+            <canvas id="mini-graph-canvas"></canvas>
+          </div>
+          <div id="coord-callout" class="coord-callout locked">
+            <i class="fa-solid fa-lock"></i> Låst – svara algebraiskt först
+          </div>
+          <div id="graph-nudge-row" class="graph-nudge-row">
+            <button type="button" class="btn-nudge" onclick="nudgeGraphX(-1)">◀ x − 1</button>
+            <button type="button" class="btn-nudge" onclick="nudgeGraphX(1)">x + 1 ▶</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: ANCHORED QUESTION PROMPT & WORKSPACE -->
+    <section class="right-col">
+      <div class="card">
+        <div class="question-anchor-box">
+          <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:0.2rem;">Aktuell Uppgift</div>
+          <div id="question-anchor-title" class="question-anchor-title">Beräkna f(5)</div>
+        </div>
+
+        <div id="notebook-display" class="notebook-display"></div>
+        <div id="workspace" class="step-box"></div>
+        <div id="feedback-box" class="feedback"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal-overlay">
+    <div id="modal-content" class="modal-content"></div>
+  </div>
+
+  <script>
+    const MINUS = "\u2212"; // Crisp mathematical minus sign (−)
+
+    function fmtNum(n) {
+      return n < 0 ? `${MINUS}${Math.abs(n)}` : `${n}`;
+    }
+
+    function toAsciiMinus(str) {
+      return String(str).replace(/[\u2212\u2013\u2014]/g, "-");
+    }
+
+    const totalAlgebraicTarget = 4;
+    let currentPhase = 1;
+    let maxUnlockedPhase = 1;
+    let completedPhases = { 1: false, 2: false, 3: false, 4: false, 5: false };
+
+    // Fas 1 (1. x eller y?) state
+    const f1Target = 10;
+    let f1Score = 0;
+    let f1Current = null;
+    let f1Answered = false;
+    let f1MilestoneShown = false;
+    let f1LastSignature = "";
+    let f1TypeQueue = [];
+    let f1RecentTypes = [];
+
+    // Phases 2–5 state
+    let currentProblemIdx = 0;
+    let phaseQueue = [];
+    let lastProblemSignature = "";
+
+    let isGraphVisible = true;
+    let isVisualCheckUnlocked = false;
+    let visualCheckVerified = false;
+    let activeUserLineX = null;
+
+    let currentProblem = null;
+    let notebookHistory = [];
+
+    const PHASE_META = {
+      1: {
+        label: "1. x eller y?",
+        subtitle: "Fas 1 • Tolka funktionsnotering",
+        isXOrY: true
+      },
+      2: {
+        label: "2. Guidad",
+        subtitle: "Fas 2 • Guidad träning med positiva tal",
+        guided: true,
+        allowNegatives: false
+      },
+      3: {
+        label: "3. Direkt",
+        subtitle: "Fas 3 • Direkt lösning i skrivboken med positiva tal",
+        guided: false,
+        allowNegatives: false
+      },
+      4: {
+        label: `4. Guidad ${MINUS}`,
+        subtitle: "Fas 4 • Guidad träning med negativa tal",
+        guided: true,
+        allowNegatives: true
+      },
+      5: {
+        label: `5. Direkt ${MINUS}`,
+        subtitle: "Fas 5 • Direkt lösning i skrivboken med negativa tal",
+        guided: false,
+        allowNegatives: true
+      }
+    };
+
+    /* ---------------- DROPDOWN GUIDE CONTROLS ---------------- */
+    function toggleGuideDropdown(e) {
+      if (e) e.stopPropagation();
+      const panel = document.getElementById("guide-panel");
+      const chevron = document.getElementById("guide-chevron");
+      const isOpen = panel.classList.contains("open");
+      if (isOpen) {
+        panel.classList.remove("open");
+        chevron.style.transform = "rotate(0deg)";
+      } else {
+        panel.classList.add("open");
+        chevron.style.transform = "rotate(180deg)";
+      }
+    }
+
+    function closeGuideDropdown() {
+      const panel = document.getElementById("guide-panel");
+      const chevron = document.getElementById("guide-chevron");
+      if (panel) panel.classList.remove("open");
+      if (chevron) chevron.style.transform = "rotate(0deg)";
+    }
+
+    document.addEventListener("click", (e) => {
+      const wrapper = document.getElementById("parenthesis-guide-wrapper");
+      if (wrapper && !wrapper.contains(e.target)) {
+        closeGuideDropdown();
+      }
+    });
+
+    /* ---------------- INIT & GLOBAL KEYBOARD SHORTCUTS ---------------- */
+    function init() {
+      document.addEventListener('keydown', (e) => {
+        if (e.repeat) return;
+
+        // Secret Teacher Shortcut: Shift + F (Complete & advance directly to next question)
+        if (e.shiftKey && (e.key === 'F' || e.key === 'f')) {
+          e.preventDefault();
+          if (currentPhase === 1) {
+            f1Score++;
+            updateProgress();
+            if (f1Score >= f1Target && !f1MilestoneShown) {
+              completeFas1Milestone();
+            } else {
+              nextFas1Question();
+            }
+          } else {
+            advanceAfterProblem(true);
+          }
+          return;
+        }
+
+        // Secret Teacher Shortcut: Shift + L (Unlock & advance to next phase)
+        if (e.shiftKey && (e.key === 'L' || e.key === 'l')) {
+          e.preventDefault();
+          unlockNextPhaseShortcut();
+          return;
+        }
+
+        // Fas 1 keyboard controls: 'x' or 'y' to answer, 'Enter' for next question
+        if (currentPhase === 1) {
+          const modalOpen = document.getElementById("modal").classList.contains("active");
+          const milestoneVisible = document.getElementById("f1-milestone-box").classList.contains("visible");
+          if (modalOpen || milestoneVisible) return;
+
+          if (!f1Answered && (e.key === 'x' || e.key === 'X')) {
+            e.preventDefault();
+            answerFas1('givenX');
+          } else if (!f1Answered && (e.key === 'y' || e.key === 'Y')) {
+            e.preventDefault();
+            answerFas1('givenY');
+          } else if (f1Answered && e.key === 'Enter') {
+            e.preventDefault();
+            nextFas1Question();
+          }
+        }
+      });
+
+      setupCanvasEvents();
+      startPhase(1);
+    }
+
+    function unlockNextPhaseShortcut() {
+      completedPhases[currentPhase] = true;
+      if (currentPhase < 5) {
+        const nextPhase = currentPhase + 1;
+        if (nextPhase > maxUnlockedPhase) {
+          maxUnlockedPhase = nextPhase;
+        }
+        startPhase(nextPhase);
+      } else {
+        updatePhaseTabsUI();
+        showSimpleModal(
+          "Alla faser upplåsta! 🏆",
+          "Du har nu låst upp och slutfört samtliga fem faser i funktionsnotering.",
+          "Fortsätt öva i Fas 5",
+          () => startPhase(5)
+        );
+      }
+    }
+
+    function selectPhase(phaseNum) {
+      if (phaseNum > maxUnlockedPhase) return;
+      startPhase(phaseNum);
+    }
+
+    function startPhase(phaseNum) {
+      currentPhase = phaseNum;
+      updatePhaseTabsUI();
+
+      const fas1View = document.getElementById("fas1-view");
+      const algebraicView = document.getElementById("algebraic-view");
+
+      if (phaseNum === 1) {
+        fas1View.style.display = "flex";
+        algebraicView.style.display = "none";
+        updateProgress();
+        if (!f1Current) {
+          nextFas1Question();
+        }
+      } else {
+        fas1View.style.display = "none";
+        algebraicView.style.display = "grid";
+        currentProblemIdx = 0;
+        phaseQueue = createBalancedShuffledQueue();
+        updateLeftColumnMode();
+        generateAndLoadProblem();
+      }
+    }
+
+    function updatePhaseTabsUI() {
+      const meta = PHASE_META[currentPhase];
+      document.getElementById("header-subtitle").innerText = meta.subtitle;
+
+      for (let p = 1; p <= 5; p++) {
+        const btn = document.getElementById(`tab-${p}`);
+        if (!btn) continue;
+        const isLocked = p > maxUnlockedPhase;
+        const isCompleted = completedPhases[p];
+        const isActive = p === currentPhase;
+
+        btn.className = "tab-btn";
+        if (isActive) btn.classList.add("active");
+        if (isLocked) btn.classList.add("locked");
+        if (isCompleted) btn.classList.add("completed");
+
+        if (isLocked) {
+          btn.innerHTML = `<i class="fa-solid fa-lock"></i> ${PHASE_META[p].label}`;
+        } else if (isCompleted && !isActive) {
+          btn.innerHTML = `<i class="fa-solid fa-check"></i> ${PHASE_META[p].label}`;
+        } else {
+          btn.innerText = PHASE_META[p].label;
+        }
+      }
+    }
+
+    function updateProgress() {
+      if (currentPhase === 1) {
+        const capped = Math.min(f1Score, f1Target);
+        document.getElementById("progress-text").innerText = `Framsteg (${f1Score}/${f1Target})`;
+        document.getElementById("sub-mode-text").innerText = `Fas 1 av 5`;
+        document.getElementById("progress-bar").style.width = `${(capped / f1Target) * 100}%`;
+      } else {
+        document.getElementById("progress-text").innerText = `Framsteg (${currentProblemIdx}/${totalAlgebraicTarget})`;
+        document.getElementById("sub-mode-text").innerText = `Fas ${currentPhase} av 5`;
+        document.getElementById("progress-bar").style.width = `${(currentProblemIdx / totalAlgebraicTarget) * 100}%`;
+      }
+    }
+
+    /* ---------------- FAS 1: 1. X ELLER Y? LOGIC ---------------- */
+    function generateBalancedFas1Sequence(prevHistory = []) {
+      const maxRun = 3;
+      const splitOptions = [
+        [5, 5],
+        [5, 5],
+        [6, 4],
+        [4, 6]
+      ];
+      const [targetX, targetY] = splitOptions[Math.floor(Math.random() * splitOptions.length)];
+
+      const initLast = prevHistory.length > 0 ? prevHistory[prevHistory.length - 1] : null;
+      let initRun = 0;
+      if (initLast) {
+        for (let i = prevHistory.length - 1; i >= 0; i--) {
+          if (prevHistory[i] === initLast) initRun++;
+          else break;
+        }
+      }
+
+      const validSequences = [];
+
+      function backtrack(seq, remX, remY, lastType, runLen) {
+        if (remX === 0 && remY === 0) {
+          validSequences.push(seq);
+          return;
+        }
+        if (remX > 0 && !(lastType === 'givenX' && runLen >= maxRun)) {
+          backtrack(
+            [...seq, 'givenX'],
+            remX - 1,
+            remY,
+            'givenX',
+            lastType === 'givenX' ? runLen + 1 : 1
+          );
+        }
+        if (remY > 0 && !(lastType === 'givenY' && runLen >= maxRun)) {
+          backtrack(
+            [...seq, 'givenY'],
+            remX,
+            remY - 1,
+            'givenY',
+            lastType === 'givenY' ? runLen + 1 : 1
+          );
+        }
+      }
+
+      backtrack([], targetX, targetY, initLast, initRun);
+      return validSequences[Math.floor(Math.random() * validSequences.length)];
+    }
+
+    function generateFas1Problem() {
+      if (f1TypeQueue.length === 0) {
+        f1TypeQueue = generateBalancedFas1Sequence(f1RecentTypes);
+      }
+
+      const type = f1TypeQueue.shift();
+      f1RecentTypes.push(type);
+      if (f1RecentTypes.length > 3) {
+        f1RecentTypes.shift();
+      }
+
+      const fnNames = ['f', 'g', 'h', 'k', 'v'];
+      let sig, fnName, num, promptStr;
+      let attempts = 0;
+
+      do {
+        attempts++;
+        fnName = fnNames[Math.floor(Math.random() * fnNames.length)];
+        num = Math.floor(Math.random() * 17) - 8; // -8 to 8
+        sig = `${fnName}:${type}:${num}`;
+      } while (sig === f1LastSignature && attempts < 30);
+
+      f1LastSignature = sig;
+
+      if (type === 'givenX') {
+        const verbs = ['Bestäm', 'Beräkna'];
+        const verb = verbs[Math.floor(Math.random() * verbs.length)];
+        promptStr = `${verb} ${fnName}(${fmtNum(num)})`;
+      } else {
+        promptStr = `Lös ekvationen ${fnName}(x) = ${fmtNum(num)}`;
+      }
+
+      return { type, promptStr };
+    }
+
+    function nextFas1Question() {
+      f1Current = generateFas1Problem();
+      f1Answered = false;
+
+      document.getElementById("f1-prompt-title").innerText = f1Current.promptStr;
+
+      const fbRow = document.getElementById("f1-feedback-row");
+      fbRow.className = "fas1-feedback-row";
+      document.getElementById("f1-next-btn").style.display = "none";
+      document.getElementById("f1-milestone-box").classList.remove("visible");
+
+      const btnX = document.getElementById("f1-btn-x");
+      const btnY = document.getElementById("f1-btn-y");
+      btnX.className = "btn-fas1-choice";
+      btnY.className = "btn-fas1-choice";
+      btnX.disabled = false;
+      btnY.disabled = false;
+    }
+
+    function answerFas1(selectedType) {
+      if (!f1Current || f1Answered) return;
+
+      const fbRow = document.getElementById("f1-feedback-row");
+      const fbText = document.getElementById("f1-feedback-text");
+      const nextBtn = document.getElementById("f1-next-btn");
+      const btnX = document.getElementById("f1-btn-x");
+      const btnY = document.getElementById("f1-btn-y");
+
+      if (selectedType === f1Current.type) {
+        f1Answered = true;
+        f1Score++;
+        updateProgress();
+
+        const chosenBtn = selectedType === 'givenX' ? btnX : btnY;
+        chosenBtn.classList.add("correct");
+        btnX.disabled = true;
+        btnY.disabled = true;
+
+        fbRow.className = "fas1-feedback-row visible success";
+        fbText.innerHTML = `<i class="fa-solid fa-circle-check"></i> Rätt! (${selectedType === 'givenX' ? 'x' : 'y'})`;
+
+        if (f1Score >= f1Target && !f1MilestoneShown) {
+          completeFas1Milestone();
+        } else {
+          nextBtn.style.display = "inline-flex";
+        }
+      } else {
+        const wrongBtn = selectedType === 'givenX' ? btnX : btnY;
+        wrongBtn.classList.add("wrong");
+        fbRow.className = "fas1-feedback-row visible error";
+        fbText.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Försök igen.`;
+        nextBtn.style.display = "none";
+      }
+    }
+
+    function completeFas1Milestone() {
+      f1MilestoneShown = true;
+      completedPhases[1] = true;
+      if (maxUnlockedPhase < 2) {
+        maxUnlockedPhase = 2;
+      }
+      updatePhaseTabsUI();
+      document.getElementById("f1-next-btn").style.display = "none";
+      document.getElementById("f1-milestone-box").classList.add("visible");
+    }
+
+    function continueFas1Practice() {
+      document.getElementById("f1-milestone-box").classList.remove("visible");
+      nextFas1Question();
+    }
+
+    /* ---------------- PHASES 2–5: ALGEBRAIC WORKSPACE ---------------- */
+    function createBalancedShuffledQueue() {
+      const queue = ["givenX", "givenX", "givenY", "givenY"];
+      for (let i = queue.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [queue[i], queue[j]] = [queue[j], queue[i]];
+      }
+      return queue;
+    }
+
+    function updateLeftColumnMode() {
+      const meta = PHASE_META[currentPhase];
+      const graphCard = document.getElementById("graph-card");
+      const paperCard = document.getElementById("paper-guide-card");
+
+      if (meta.guided) {
+        graphCard.style.display = "flex";
+        paperCard.style.display = "none";
+      } else {
+        graphCard.style.display = "none";
+        paperCard.style.display = "flex";
+      }
+    }
+
+    function generateDynamicProblem() {
+      const meta = PHASE_META[currentPhase];
+      const fnNames = ["f", "g", "v", "h"];
+      const targetType = phaseQueue[currentProblemIdx] || (Math.random() < 0.5 ? "givenX" : "givenY");
+
+      let fnName, k, m, xVal, yVal, signature;
+      let attempts = 0;
+
+      do {
+        attempts++;
+        fnName = fnNames[Math.floor(Math.random() * fnNames.length)];
+
+        if (!meta.allowNegatives) {
+          // FAS 2 & FAS 3: Positive x and y values ONLY, subtraction allowed in function rule
+          const kPool = meta.guided ? [2, 3, 4] : [2, 3, 4, 5];
+          const xPool = meta.guided ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6];
+          const useSubtraction = Math.random() < 0.45;
+          const absM = Math.floor(Math.random() * 8) + 1;
+
+          k = kPool[Math.floor(Math.random() * kPool.length)];
+          m = useSubtraction ? -absM : absM;
+          xVal = xPool[Math.floor(Math.random() * xPool.length)];
+          yVal = k * xVal + m;
+
+          signature = `${fnName}:${k}:${m}:${targetType}:${xVal}`;
+          const maxY = meta.guided ? 22 : 35;
+
+          if (
+            signature !== lastProblemSignature &&
+            xVal > 0 &&
+            yVal >= 1 &&
+            yVal <= maxY
+          ) {
+            break;
+          }
+        } else {
+          // FAS 4 & FAS 5: Negative x and/or y values guaranteed
+          const kPool = [-4, -3, -2, 2, 3, 4];
+          const mPool = [-9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+          const xPool = [-5, -4, -3, -2, -1, 1, 2, 3, 4, 5];
+
+          k = kPool[Math.floor(Math.random() * kPool.length)];
+          m = mPool[Math.floor(Math.random() * mPool.length)];
+          xVal = xPool[Math.floor(Math.random() * xPool.length)];
+          yVal = k * xVal + m;
+
+          signature = `${fnName}:${k}:${m}:${targetType}:${xVal}`;
+          const hasNegativeCoord = (xVal < 0 || yVal < 0);
+          const fitsGraph = !meta.guided || (Math.abs(xVal) <= 20 && Math.abs(yVal) <= 22);
+
+          if (
+            signature !== lastProblemSignature &&
+            hasNegativeCoord &&
+            yVal !== 0 &&
+            fitsGraph
+          ) {
+            break;
+          }
+        }
+      } while (attempts < 150);
+
+      lastProblemSignature = signature;
+
+      const val = targetType === "givenX" ? xVal : yVal;
+      const ansNum = targetType === "givenX" ? yVal : xVal;
+      const promptStr = targetType === "givenX"
+        ? `Beräkna ${fnName}(${fmtNum(val)})`
+        : `Lös ekvationen ${fnName}(x) = ${fmtNum(val)}`;
+      const exprStr = `${fmtNum(k)}x ${m >= 0 ? '+ ' + m : MINUS + ' ' + Math.abs(m)}`;
+
+      return {
+        fnName, k, m, xVal, yVal, targetType, val, promptStr, ansNum, exprStr
+      };
+    }
+
+    function clearFeedback() {
+      const box = document.getElementById("feedback-box");
+      box.className = "feedback";
+      box.innerText = "";
+    }
+
+    function showFeedback(text, isError) {
+      const box = document.getElementById("feedback-box");
+      box.className = `feedback ${isError ? "error" : "success"}`;
+      box.innerText = text;
+    }
+
+    function resetGraphStateForNewProblem() {
+      isVisualCheckUnlocked = false;
+      visualCheckVerified = false;
+      activeUserLineX = null;
+
+      const graphCard = document.getElementById("graph-card");
+      if (graphCard) {
+        graphCard.classList.remove("highlight-active", "highlight-verified");
+      }
+
+      const nudgeRow = document.getElementById("graph-nudge-row");
+      if (nudgeRow) {
+        nudgeRow.style.display = "none";
+      }
+
+      const calloutEl = document.getElementById("coord-callout");
+      if (calloutEl) {
+        calloutEl.className = "coord-callout locked";
+        calloutEl.innerHTML = `<i class="fa-solid fa-lock"></i> Låst – svara algebraiskt först`;
+      }
+    }
+
+    function generateAndLoadProblem() {
+      clearFeedback();
+      updateProgress();
+      resetGraphStateForNewProblem();
+      notebookHistory = [];
+
+      currentProblem = generateDynamicProblem();
+      const p = currentProblem;
+
+      document.getElementById("function-rule-display").innerText = `${p.fnName}(x) = ${p.exprStr}`;
+      document.getElementById("question-anchor-title").innerText = p.promptStr;
+
+      notebookHistory.push(`<div class="nb-line">${p.fnName}(x) = ${p.exprStr}</div>`);
+      renderNotebook();
+
+      if (PHASE_META[currentPhase].guided) {
+        drawGraph();
+        renderGuidedStep1();
+      } else {
+        renderDirectStep();
+      }
+    }
+
+    function renderNotebook() {
+      const nb = document.getElementById("notebook-display");
+      nb.innerHTML = notebookHistory.join("");
+    }
+
+    /* ---------------- SMART MATH SPACING FOR INPUT BOXES ---------------- */
+    function formatMathSmart(raw) {
+      let s = raw.replace(/[\u2212\u2013\u2014]/g, "-");
+      s = s.replace(/\s+/g, "");
+      if (!s) return "";
+
+      let out = "";
+      for (let i = 0; i < s.length; i++) {
+        const ch = s[i];
+        const prev = i > 0 ? s[i - 1] : "";
+
+        if (ch === "=") {
+          if (prev === "=") continue;
+          out += " = ";
+        } else if (ch === "+") {
+          if (i === 0 || prev === "=" || prev === "(" || prev === "+" || prev === "-" || prev === "·" || prev === "*") {
+            out += "+";
+          } else {
+            out += " + ";
+          }
+        } else if (ch === "-") {
+          if (i === 0 || prev === "=" || prev === "(" || prev === "+" || prev === "-" || prev === "·" || prev === "*") {
+            out += MINUS;
+          } else {
+            out += ` ${MINUS} `;
+          }
+        } else if (ch === "·" || ch === "*") {
+          out += " · ";
+        } else {
+          out += ch;
+        }
+      }
+
+      return out.replace(/^\s+/, "");
+    }
+
+    function attachSmartMathInput(inputId) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+
+      input.addEventListener("input", (e) => {
+        if (e.inputType && e.inputType.startsWith("delete")) {
+          return;
+        }
+
+        const rawVal = input.value;
+        const selStart = input.selectionStart || 0;
+
+        const nonSpaceBefore = rawVal.slice(0, selStart).replace(/\s+/g, "").length;
+        const atEnd = selStart >= rawVal.length;
+
+        const formatted = formatMathSmart(rawVal);
+        input.value = formatted;
+
+        if (atEnd) {
+          input.setSelectionRange(formatted.length, formatted.length);
+        } else {
+          let count = 0;
+          let newPos = formatted.length;
+          for (let i = 0; i < formatted.length; i++) {
+            if (formatted[i] !== " ") {
+              count++;
+              if (count === nonSpaceBefore) {
+                newPos = i + 1;
+                if (formatted[newPos] === " ") {
+                  newPos++;
+                }
+                break;
+              }
+            }
+          }
+          input.setSelectionRange(newPos, newPos);
+        }
+      });
+    }
+
+    /* ---------------- SNABBKNAPPAR HELPERS ---------------- */
+    function insertSnabbSymbol(sym) {
+      const input = document.querySelector("#workspace input[type='text']");
+      if (!input) return;
+
+      const start = input.selectionStart || 0;
+      const end = input.selectionEnd || 0;
+      const text = input.value;
+
+      if (sym.includes("()")) {
+        const fnPrefix = sym.replace("=", "");
+        const insertion = `${fnPrefix} = `;
+        const nextVal = text.substring(0, start) + insertion + text.substring(end);
+        input.value = nextVal;
+        input.focus();
+        const parenIndex = start + fnPrefix.indexOf("(") + 1;
+        input.setSelectionRange(parenIndex, parenIndex);
+        return;
+      }
+
+      const rawCombined = text.substring(0, start) + sym + text.substring(end);
+      const nonSpaceBefore = (text.substring(0, start) + sym).replace(/\s+/g, "").length;
+      const atEnd = end >= text.length;
+
+      const formatted = formatMathSmart(rawCombined);
+      input.value = formatted;
+      input.focus();
+
+      if (atEnd) {
+        input.setSelectionRange(formatted.length, formatted.length);
+      } else {
+        let count = 0;
+        let newPos = formatted.length;
+        for (let i = 0; i < formatted.length; i++) {
+          if (formatted[i] !== " ") {
+            count++;
+            if (count === nonSpaceBefore) {
+              newPos = i + 1;
+              if (formatted[newPos] === " ") newPos++;
+              break;
+            }
+          }
+        }
+        input.setSelectionRange(newPos, newPos);
+      }
+    }
+
+    function getSnabbButtonsHTML() {
+      const p = currentProblem;
+      const dynamicFnBtn = `${p.fnName}()=`;
+      return `
+        <div class="snabb-buttons-container">
+          <button type="button" class="btn-snabb" onclick="insertSnabbSymbol('·')">·</button>
+          <button type="button" class="btn-snabb" onclick="insertSnabbSymbol('+')">+</button>
+          <button type="button" class="btn-snabb" onclick="insertSnabbSymbol('${MINUS}')">${MINUS}</button>
+          <button type="button" class="btn-snabb" onclick="insertSnabbSymbol('=')">=</button>
+          <button type="button" class="btn-snabb" onclick="insertSnabbSymbol('x=')">x =</button>
+          <button type="button" class="btn-snabb" onclick="insertSnabbSymbol('${dynamicFnBtn}')">${p.fnName}() =</button>
+        </div>
+      `;
+    }
+
+    /* ---------------- GUIDED PHASES (FAS 2 & FAS 4) ---------------- */
+    function renderGuidedStep1() {
+      const p = currentProblem;
+      const workspace = document.getElementById("workspace");
+      workspace.innerHTML = `
+        <div class="step-header">Steg 1: Identifiera noteringen</div>
+        <div class="prompt-text">Vad är givet i uppgiften "${p.promptStr}"?</div>
+        <div class="options-grid">
+          <button class="btn-option" onclick="submitGuidedClassification('givenX')">In-värde x är känt</button>
+          <button class="btn-option" onclick="submitGuidedClassification('givenY')">Ut-värde ${p.fnName}(x) är givet</button>
+        </div>
+      `;
+    }
+
+    function submitGuidedClassification(selected) {
+      const p = currentProblem;
+      if (selected === p.targetType) {
+        clearFeedback();
+        renderGuidedStep2();
+      } else {
+        showFeedback(
+          p.targetType === 'givenX'
+            ? `I ${p.promptStr} står ett tal i parentesen ➜ x är känt!`
+            : `I ${p.promptStr} står ${p.fnName}(x) = ${fmtNum(p.val)} ➜ ut-värdet är givet!`,
+          true
+        );
+      }
+    }
+
+    function renderGuidedStep2() {
+      const workspace = document.getElementById("workspace");
+      workspace.innerHTML = `
+        <div class="step-header">Steg 2: Ställ upp ekvationen/insättningen</div>
+        <div class="prompt-text">Skriv den exakta uppställningen:</div>
+        ${getSnabbButtonsHTML()}
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <input type="text" id="p1-setup-input" style="width:100%; max-width:300px;" autofocus onkeydown="if(event.key==='Enter') submitGuidedSetup()">
+          <button class="btn-submit" onclick="submitGuidedSetup()">Nästa</button>
+        </div>
+      `;
+      attachSmartMathInput("p1-setup-input");
+      document.getElementById("p1-setup-input").focus();
+    }
+
+    function isValidStep2Setup(rawInput, p) {
+      const clean = toAsciiMinus(rawInput).trim().replace(/\s+/g, '');
+      if (!clean) return false;
+
+      if (p.targetType === 'givenX') {
+        const lhsPrefix = new RegExp('^' + p.fnName + '\\(' + p.val + '\\)=', 'i');
+        const rhsSuffix = new RegExp('=' + p.fnName + '\\(' + p.val + '\\)$', 'i');
+        let expr = clean.replace(lhsPrefix, '').replace(rhsSuffix, '');
+
+        if (expr === String(p.ansNum) || expr === `(${p.ansNum})`) return false;
+
+        expr = expr
+          .replace(/[·×]/g, '*')
+          .replace(/\)\(/g, ')*(')
+          .replace(/(\d)\(/g, '$1*(');
+
+        if (!/^[0-9+\-*/().]+$/.test(expr)) return false;
+
+        try {
+          const val = Function('"use strict"; return (' + expr + ')')();
+          return typeof val === 'number' && Number.isFinite(val) && Math.abs(val - p.ansNum) < 1e-9;
+        } catch {
+          return false;
+        }
+      } else {
+        const eq = clean.toLowerCase();
+        if (!eq.includes('=') || !eq.includes('x')) return false;
+        if (eq.includes(`${p.fnName.toLowerCase()}(`)) return false;
+        if (/^x=-?\d+$/.test(eq) || /^-?\d+=x$/.test(eq)) return false;
+
+        const parts = eq.split('=');
+        if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
+
+        const evalLinearAt = (side, xNum) => {
+          let s = side
+            .replace(/[·×]/g, '*')
+            .replace(/(\d)(x)/g, '$1*$2')
+            .replace(/(x)(\d)/g, '$1*$2')
+            .replace(/(\d)\(/g, '$1*(')
+            .replace(/\)(x)/g, ')*$1')
+            .replace(/-(x)/g, '-1*$1')
+            .replace(/\+(x)/g, '+1*$1')
+            .replace(/^x/, '1*x')
+            .replace(/\(x/g, '(1*x')
+            .replace(/x/g, `(${xNum})`);
+
+          if (!/^[0-9+\-*/().]+$/.test(s)) return NaN;
+          return Function('"use strict"; return (' + s + ')')();
+        };
+
+        try {
+          const d0 = evalLinearAt(parts[0], 0) - evalLinearAt(parts[1], 0);
+          const d1 = evalLinearAt(parts[0], 1) - evalLinearAt(parts[1], 1);
+          if (!Number.isFinite(d0) || !Number.isFinite(d1)) return false;
+          const slope = d1 - d0;
+          if (Math.abs(slope) < 1e-9) return false;
+          const root = -d0 / slope;
+          return Math.abs(root - p.ansNum) < 1e-9;
+        } catch {
+          return false;
+        }
+      }
+    }
+
+    function submitGuidedSetup() {
+      const p = currentProblem;
+      const rawInput = document.getElementById("p1-setup-input").value;
+
+      if (isValidStep2Setup(rawInput, p)) {
+        clearFeedback();
+        const formattedArg = p.val < 0 ? `(${fmtNum(p.val)})` : `${p.val}`;
+        const mirroredLine = p.targetType === 'givenX'
+          ? `${p.fnName}(${fmtNum(p.val)}) = ${fmtNum(p.k)} · ${formattedArg} ${p.m >= 0 ? '+ ' + p.m : MINUS + ' ' + Math.abs(p.m)}`
+          : `${fmtNum(p.val)} = ${p.exprStr}`;
+
+        notebookHistory.push(`<div class="nb-line">${mirroredLine}</div>`);
+        renderNotebook();
+        renderGuidedStep3();
+      } else {
+        showFeedback("Kontrollera din uppställning och försök igen.", true);
+      }
+    }
+
+    function renderGuidedStep3() {
+      const p = currentProblem;
+      const workspace = document.getElementById("workspace");
+
+      const promptMsg = p.targetType === 'givenX'
+        ? "Räkna ut och ange det slutgiltiga svaret:"
+        : "Utför beräkningen i din anteckningsbok och ange ditt slutgiltiga svar:";
+
+      workspace.innerHTML = `
+        <div class="step-header">Steg 3: Slutgiltigt svar</div>
+        <div class="prompt-text">${promptMsg}</div>
+        ${getSnabbButtonsHTML()}
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <input type="text" id="p1-final-input" style="width:220px;" autofocus onkeydown="if(event.key==='Enter') submitFinalAnswer('p1-final-input')">
+          <button class="btn-submit" onclick="submitFinalAnswer('p1-final-input')">Svara</button>
+        </div>
+      `;
+      attachSmartMathInput("p1-final-input");
+      document.getElementById("p1-final-input").focus();
+    }
+
+    /* ---------------- VISUAL CHECK STEP (AFTER ANSWERING IN FAS 2 & FAS 4) ---------------- */
+    function startVisualCheckStep() {
+      isVisualCheckUnlocked = true;
+      visualCheckVerified = false;
+
+      if (!isGraphVisible) {
+        toggleGraph();
+      }
+
+      const graphCard = document.getElementById("graph-card");
+      if (graphCard) {
+        graphCard.classList.add("highlight-active");
+      }
+
+      const nudgeRow = document.getElementById("graph-nudge-row");
+      if (nudgeRow) {
+        nudgeRow.style.display = "flex";
+      }
+
+      const calloutEl = document.getElementById("coord-callout");
+      if (calloutEl) {
+        calloutEl.className = "coord-callout unlocked";
+        calloutEl.innerText = "Dra eller klicka på grafen för visuell kontroll";
+      }
+
+      drawGraph();
+      renderVisualCheckWorkspace();
+    }
+
+    function renderVisualCheckWorkspace() {
+      const p = currentProblem;
+      const workspace = document.getElementById("workspace");
+      const isLastInPhase = (currentProblemIdx + 1 >= totalAlgebraicTarget);
+      const nextBtnLabel = isLastInPhase ? `Slutför Fas ${currentPhase}` : "Nästa Uppgift";
+
+      const instructionText = p.targetType === 'givenX'
+        ? `Rätt! Gör nu en visuell kontroll: dra i grafen till vänster till x = ${fmtNum(p.xVal)} och kontrollera att y-värdet blir ${fmtNum(p.yVal)}.`
+        : `Rätt! Gör nu en visuell kontroll: dra i grafen till vänster tills y = ${fmtNum(p.yVal)} och kontrollera att x-värdet blir ${fmtNum(p.xVal)}.`;
+
+      if (!visualCheckVerified) {
+        workspace.innerHTML = `
+          <div class="step-header">Steg 4: Visuell kontroll</div>
+          <div class="visual-check-banner">
+            <i class="fa-solid fa-chart-line" style="margin-top:0.2rem; color:var(--primary);"></i>
+            <div>${instructionText}</div>
+          </div>
+        `;
+      } else {
+        workspace.innerHTML = `
+          <div class="step-header">Steg 4: Visuell kontroll klar</div>
+          <div class="visual-check-banner verified">
+            <i class="fa-solid fa-circle-check" style="margin-top:0.2rem; color:var(--success);"></i>
+            <div>Stämmer! Punkten (${fmtNum(p.xVal)}, ${fmtNum(p.yVal)}) i grafen visar att ${p.fnName}(${fmtNum(p.xVal)}) = ${fmtNum(p.yVal)} precis som i din algebraiska beräkning.</div>
+          </div>
+          <button class="btn-next" onclick="advanceAfterProblem(false)">${nextBtnLabel} <i class="fa-solid fa-arrow-right"></i></button>
+        `;
+      }
+    }
+
+    /* ---------------- DIRECT PHASES (FAS 3 & FAS 5) ---------------- */
+    function renderDirectStep() {
+      const workspace = document.getElementById("workspace");
+      workspace.innerHTML = `
+        <div class="step-header">Självständig beräkning</div>
+        <div class="prompt-text">Lös uppgiften i din anteckningsbok och ange svaret:</div>
+        ${getSnabbButtonsHTML()}
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <input type="text" id="p-direct-input" style="width:220px;" autofocus onkeydown="if(event.key==='Enter') submitFinalAnswer('p-direct-input')">
+          <button class="btn-submit" onclick="submitFinalAnswer('p-direct-input')">Svara</button>
+        </div>
+      `;
+      attachSmartMathInput("p-direct-input");
+      document.getElementById("p-direct-input").focus();
+    }
+
+    /* ---------------- STRICT FINAL ANSWER VALIDATION ---------------- */
+    function validateStrictFinalAnswer(rawInput, p) {
+      const clean = toAsciiMinus(rawInput).trim().replace(/\s+/g, '');
+      if (!clean) {
+        return { valid: false, msg: "Skriv in ditt svar i rutan." };
+      }
+
+      if (p.targetType === 'givenX') {
+        const expected = `${p.fnName}(${p.val})=${p.ansNum}`.toLowerCase();
+        if (clean.toLowerCase() === expected) {
+          return { valid: true };
+        }
+
+        if (clean === String(p.ansNum) || clean.toLowerCase() === `y=${p.ansNum}`) {
+          return {
+            valid: false,
+            msg: "Rätt värde, men skriv hela svaret med funktionsnotering som visar både in-värde och ut-värde."
+          };
+        }
+        if (clean.toLowerCase().startsWith("x=")) {
+          return {
+            valid: false,
+            msg: "Här är x redan känt. Skriv ut-värdet med funktionsnotering."
+          };
+        }
+        const prefixRegex = new RegExp(`^${p.fnName}\\(${p.val}\\)=-?\\d+$`, 'i');
+        if (prefixRegex.test(clean)) {
+          return {
+            valid: false,
+            msg: "Rätt format, men kontrollera din beräkning i anteckningsboken."
+          };
+        }
+        return {
+          valid: false,
+          msg: "Kontrollera både uträkning och hur svaret ska skrivas med funktionsnotering."
+        };
+      } else {
+        const expected = `x=${p.ansNum}`;
+        if (clean.toLowerCase() === expected) {
+          return { valid: true };
+        }
+
+        if (clean === String(p.ansNum)) {
+          return {
+            valid: false,
+            msg: "Rätt tal, men ange svaret som en ekvationslösning för variabeln x."
+          };
+        }
+        if (/^x=-?\d+$/i.test(clean)) {
+          return {
+            valid: false,
+            msg: "Rätt format, men kontrollera din ekvationslösning i anteckningsboken."
+          };
+        }
+        return {
+          valid: false,
+          msg: "Kontrollera både ekvationslösning och att svaret anges för x."
+        };
+      }
+    }
+
+    function submitFinalAnswer(inputId) {
+      const p = currentProblem;
+      const rawInput = document.getElementById(inputId).value;
+      const result = validateStrictFinalAnswer(rawInput, p);
+
+      if (result.valid) {
+        clearFeedback();
+        const canonicalAnswer = p.targetType === 'givenX'
+          ? `${p.fnName}(${fmtNum(p.val)}) = ${fmtNum(p.ansNum)}`
+          : `x = ${fmtNum(p.ansNum)}`;
+
+        notebookHistory.push(`<div class="nb-divider"></div>`);
+        notebookHistory.push(`<div class="nb-line" style="color:var(--success);">${canonicalAnswer}</div>`);
+        renderNotebook();
+
+        if (PHASE_META[currentPhase].guided) {
+          startVisualCheckStep();
+        } else {
+          const isLastInPhase = (currentProblemIdx + 1 >= totalAlgebraicTarget);
+          const nextBtnLabel = isLastInPhase ? `Slutför Fas ${currentPhase}` : "Nästa Uppgift";
+          document.getElementById("workspace").innerHTML = `
+            <button class="btn-next" onclick="advanceAfterProblem(false)">${nextBtnLabel} <i class="fa-solid fa-arrow-right"></i></button>
+          `;
+        }
+      } else {
+        showFeedback(result.msg, true);
+      }
+    }
+
+    /* ---------------- TRANSITIONS & PHASE UNLOCKING ---------------- */
+    function advanceAfterProblem(autoAdvance = false) {
+      currentProblemIdx++;
+      updateProgress();
+
+      if (currentProblemIdx >= totalAlgebraicTarget) {
+        completedPhases[currentPhase] = true;
+        if (currentPhase < 5 && currentPhase + 1 > maxUnlockedPhase) {
+          maxUnlockedPhase = currentPhase + 1;
+        }
+        updatePhaseTabsUI();
+
+        if (currentPhase === 3) {
+          showFas3ReadinessModal();
+        } else if (currentPhase < 5) {
+          const nextPhase = currentPhase + 1;
+          showSimpleModal(
+            `Fas ${currentPhase} avklarad! 🎉`,
+            `Bra jobbat! Du har klarat alla ${totalAlgebraicTarget} uppgifter och låst upp ${PHASE_META[nextPhase].label}.`,
+            `Starta ${PHASE_META[nextPhase].label}`,
+            () => startPhase(nextPhase)
+          );
+        } else {
+          showSimpleModal(
+            "Alla faser klara! 🏆",
+            "Grattis! Du har klarat alla fem faser i Grunderna i Funktionsnotering.",
+            "Öva igen i Fas 5",
+            () => startPhase(5)
+          );
+        }
+      } else {
+        generateAndLoadProblem();
+      }
+    }
+
+    /* ---------------- END OF FAS 3 READINESS CHECK MODAL ---------------- */
+    function showFas3ReadinessModal() {
+      const container = document.getElementById("modal-content");
+      container.innerHTML = `
+        <h2>Fas 3 avklarad! 🎉</h2>
+        <p>
+          I <strong>Fas 4</strong> börjar vi räkna med <strong>negativa tal</strong>. Har du arbetat med ekvationer med negativa tal tidigare? Om inte är det bra att träna på eller repetera det innan du går vidare till Fas 4.
+        </p>
+        <div class="teckenregel-box">
+          <div class="teckenregel-title"><i class="fa-solid fa-lightbulb"></i> Påminnelse: Teckenregeln</div>
+          <ul class="teckenregel-list">
+            <li><strong>Lika tecken blir plus</strong></li>
+            <li><strong>Olika tecken blir minus</strong></li>
+          </ul>
+          <div class="teckenregel-examples">
+            <span>(+) · (+) = +</span>
+            <span>(${MINUS}) · (${MINUS}) = +</span>
+            <span>(+) · (${MINUS}) = ${MINUS}</span>
+            <span>(${MINUS}) · (+) = ${MINUS}</span>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-submit" onclick="proceedToFas4()">Ja, jag är redo — Starta Fas 4</button>
+          <button class="btn-secondary" onclick="showBrushUpNotice()">Nej, jag behöver repetera först</button>
+        </div>
+      `;
+      document.getElementById("modal").classList.add("active");
+    }
+
+    function showBrushUpNotice() {
+      const container = document.getElementById("modal-content");
+      container.innerHTML = `
+        <h2>Repetera ekvationer med negativa tal 📘</h2>
+        <p>
+          Träna gärna på eller repetera ekvationslösning med negativa tal innan du går vidare. <strong>Fas 4</strong> är upplåst i menyn högst upp så att du kan starta så snart du känner dig redo!
+        </p>
+        <div class="teckenregel-box">
+          <div class="teckenregel-title"><i class="fa-solid fa-lightbulb"></i> Kom ihåg teckenregeln</div>
+          <ul class="teckenregel-list">
+            <li><strong>Lika tecken blir plus</strong></li>
+            <li><strong>Olika tecken blir minus</strong></li>
+          </ul>
+          <div class="teckenregel-examples">
+            <span>(+) · (+) = +</span>
+            <span>(${MINUS}) · (${MINUS}) = +</span>
+            <span>(+) · (${MINUS}) = ${MINUS}</span>
+            <span>(${MINUS}) · (+) = ${MINUS}</span>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-submit" onclick="proceedToFas4()">Jag är redo nu — Starta Fas 4</button>
+          <button class="btn-secondary" onclick="stayInFas3()">Stanna kvar och öva i Fas 3</button>
+        </div>
+      `;
+    }
+
+    function proceedToFas4() {
+      closeModal();
+      startPhase(4);
+    }
+
+    function stayInFas3() {
+      closeModal();
+      startPhase(3);
+    }
+
+    /* ---------------- MINI GRAPH CANVAS ---------------- */
+    function toggleGraph() {
+      isGraphVisible = !isGraphVisible;
+      const wrapper = document.getElementById("graph-wrapper");
+      const label = document.getElementById("graph-toggle-label");
+      const icon = document.getElementById("graph-eye-icon");
+
+      if (isGraphVisible) {
+        wrapper.style.display = "block";
+        label.innerText = "Dölj graf";
+        icon.className = "fa-solid fa-eye";
+        drawGraph();
+      } else {
+        wrapper.style.display = "none";
+        label.innerText = "Visa graf";
+        icon.className = "fa-solid fa-eye-slash";
+      }
+    }
+
+    function updateVisualCheckCoordinates(newX) {
+      if (!isVisualCheckUnlocked || !currentProblem) return;
+      const clampedX = Math.max(-25, Math.min(25, newX));
+      activeUserLineX = clampedX;
+
+      const p = currentProblem;
+      if (clampedX === p.xVal && !visualCheckVerified) {
+        visualCheckVerified = true;
+        const graphCard = document.getElementById("graph-card");
+        if (graphCard) {
+          graphCard.classList.remove("highlight-active");
+          graphCard.classList.add("highlight-verified");
+        }
+        renderVisualCheckWorkspace();
+      }
+
+      drawGraph();
+    }
+
+    function nudgeGraphX(delta) {
+      if (!isVisualCheckUnlocked || !currentProblem) return;
+      const startX = activeUserLineX !== null ? activeUserLineX : 0;
+      updateVisualCheckCoordinates(startX + delta);
+    }
+
+    function drawGraph() {
+      if (!isGraphVisible || !PHASE_META[currentPhase].guided) return;
+      const canvas = document.getElementById("mini-graph-canvas");
+      if (!canvas) return;
+
+      canvas.style.cursor = isVisualCheckUnlocked ? "ew-resize" : "not-allowed";
+
+      const rect = canvas.parentElement.getBoundingClientRect();
+      if (rect.width === 0) return;
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+
+      const scale = 25;
+      ctx.clearRect(0, 0, w, h);
+
+      const m2c = (x, y) => ({
+        cx: w / 2 + x * (w / (scale * 2)),
+        cy: h / 2 - y * (h / (scale * 2))
+      });
+
+      // Grid Lines
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1;
+      for (let i = -scale; i <= scale; i += 5) {
+        if (i === 0) continue;
+        const pt = m2c(i, i);
+        ctx.beginPath(); ctx.moveTo(pt.cx, 0); ctx.lineTo(pt.cx, h); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, pt.cy); ctx.lineTo(w, pt.cy); ctx.stroke();
+      }
+
+      // Main Axes
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = '#2563eb';
+      ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+
+      ctx.strokeStyle = '#e11d48';
+      ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
+
+      // Axis Ticks by 5s
+      ctx.font = '700 10px "IBM Plex Sans", sans-serif';
+      ctx.fillStyle = '#64748b';
+      for (let i = -20; i <= 20; i += 5) {
+        if (i === 0) continue;
+        const pt = m2c(i, i);
+        const tickLabel = fmtNum(i);
+        ctx.fillText(tickLabel, pt.cx - 8, h / 2 + 12);
+        ctx.fillText(tickLabel, w / 2 + 4, pt.cy + 4);
+      }
+
+      // Plot Line
+      const p = currentProblem;
+      if (p) {
+        ctx.strokeStyle = '#4f46e5';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        const p1 = m2c(-scale, p.k * (-scale) + p.m);
+        const p2 = m2c(scale, p.k * scale + p.m);
+        ctx.moveTo(p1.cx, p1.cy); ctx.lineTo(p2.cx, p2.cy); ctx.stroke();
+
+        const calloutEl = document.getElementById("coord-callout");
+        if (!isVisualCheckUnlocked) {
+          calloutEl.className = "coord-callout locked";
+          calloutEl.innerHTML = `<i class="fa-solid fa-lock"></i> Låst – svara algebraiskt först`;
+          return;
+        }
+
+        if (activeUserLineX !== null) {
+          const curY = p.k * activeUserLineX + p.m;
+          const pt = m2c(activeUserLineX, curY);
+          const isTargetMatch = (activeUserLineX === p.xVal);
+
+          ctx.setLineDash([4, 4]);
+          ctx.strokeStyle = '#2563eb';
+          ctx.beginPath(); ctx.moveTo(m2c(activeUserLineX, 0).cx, h / 2); ctx.lineTo(pt.cx, pt.cy); ctx.stroke();
+          ctx.strokeStyle = '#e11d48';
+          ctx.beginPath(); ctx.moveTo(pt.cx, pt.cy); ctx.lineTo(w / 2, pt.cy); ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = isTargetMatch ? '#16a34a' : '#9333ea';
+          ctx.beginPath();
+          ctx.arc(pt.cx, pt.cy, isTargetMatch ? 7 : 6, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (isTargetMatch) {
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            calloutEl.className = "coord-callout verified";
+            calloutEl.innerText = `✓ Punkt: (${fmtNum(activeUserLineX)}, ${fmtNum(curY)}) ➔ ${p.fnName}(${fmtNum(activeUserLineX)}) = ${fmtNum(curY)}`;
+          } else {
+            calloutEl.className = "coord-callout unlocked";
+            calloutEl.innerText = `Punkt: (${fmtNum(activeUserLineX)}, ${fmtNum(curY)}) ➔ ${p.fnName}(${fmtNum(activeUserLineX)}) = ${fmtNum(curY)}`;
+          }
+        } else {
+          calloutEl.className = "coord-callout unlocked";
+          calloutEl.innerText = "Dra eller klicka på grafen för visuell kontroll";
+        }
+      }
+    }
+
+    function setupCanvasEvents() {
+      const c = document.getElementById("mini-graph-canvas");
+      if (!c) return;
+
+      const handleMove = (e) => {
+        if (!isVisualCheckUnlocked) return;
+        const rect = c.getBoundingClientRect();
+        const cx = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+        const mathX = (cx - rect.width / 2) / (rect.width / 50);
+        updateVisualCheckCoordinates(Math.round(mathX));
+      };
+
+      c.addEventListener("mousedown", handleMove);
+      c.addEventListener("mousemove", (e) => { if (e.buttons === 1) handleMove(e); });
+      c.addEventListener("touchstart", (e) => {
+        if (isVisualCheckUnlocked) e.preventDefault();
+        handleMove(e);
+      }, { passive: false });
+      c.addEventListener("touchmove", (e) => {
+        if (isVisualCheckUnlocked) e.preventDefault();
+        handleMove(e);
+      }, { passive: false });
+    }
+
+    function showSimpleModal(title, body, btnText, action) {
+      const container = document.getElementById("modal-content");
+      container.innerHTML = `
+        <h2>${title}</h2>
+        <p>${body}</p>
+        <div class="modal-actions">
+          <button id="modal-btn" class="btn-submit">${btnText}</button>
+        </div>
+      `;
+      document.getElementById("modal-btn").onclick = () => {
+        closeModal();
+        if (action) action();
+      };
+      document.getElementById("modal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.remove("active");
+    }
+
+    window.onload = init;
+    window.onresize = drawGraph;
+  </script>
+</body>
+</html>
